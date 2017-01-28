@@ -1,6 +1,6 @@
 FROM tomcat:8.0.41-jre8
 
-MAINTAINER Daemonites <hello@daemon.com.au>
+MAINTAINER krushik <krushik@assist.ru>
 ENV LUCEE_VERSION 5.1.0.34
 ENV LUCEE_JARS_URL http://release.lucee.org/rest/update/provider/loader/$LUCEE_VERSION
 ENV LUCEE_JAVA_OPTS "-Xms256m -Xmx512m"
@@ -25,6 +25,10 @@ RUN chmod a+x /usr/local/tomcat/bin/setenv.sh
 COPY lucee-server.xml /opt/lucee/server/lucee-server/context/lucee-server.xml
 COPY lucee-web.xml.cfm /opt/lucee/web/lucee-web.xml.cfm
 
+# Merge log dirs
+RUN ln -s /usr/local/tomcat/logs /opt/lucee/server/lucee-server/context/logs && \
+    ln -s /usr/local/tomcat/logs /opt/lucee/web/logs
+
 # Provide test page
 RUN mkdir -p /var/www
 COPY index.cfm /var/www/
@@ -35,7 +39,7 @@ RUN /usr/local/tomcat/bin/catalina.sh start && \
     while [ ! -f "/opt/lucee/web/logs/application.log" ] ; do sleep 2; done && \
     echo -n "test app page: "; wget -q http://127.0.0.1:8888/ && echo OK && \
     echo -n "server admin page: "; wget -qO- http://127.0.0.1:8888/lucee/admin/server.cfm | grep -q "button submit" && echo OK && \
-    /usr/local/tomcat/bin/catalina.sh stop 2>/dev/null
+    /usr/local/tomcat/bin/catalina.sh stop 2>/dev/null && rm -f -- /usr/local/tomcat/logs/*
 
 # Replace the Trusted SSL Certificates packaged with Lucee with those from Debian
 #   ca-certificates package from the OS is the most recent authority

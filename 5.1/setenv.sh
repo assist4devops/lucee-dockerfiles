@@ -8,7 +8,7 @@
 : ${LUCEE_JAVA_OPTS:="-Xms256m -Xmx512m"}
 
 # Use /dev/urandom for EGD (http://wiki.apache.org/tomcat/HowTo/FasterStartUp)
-JAVA_OPTS="${LUCEE_JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom";
+JAVA_OPTS="${LUCEE_JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom -Dlucee.extensions=D4EDFDBD-A9A3-E9AF-597322D767E0C949";
 
 # additional JVM arguments can be added to the above line as needed, such as
 # custom Garbage Collection arguments.
